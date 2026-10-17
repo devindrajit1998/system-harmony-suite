@@ -15,7 +15,7 @@ function TenantDashboard() {
   const tenant = useTenant();
   const modules = useModules();
   const { t, tp } = useTerms();
-  const records = useAppStore((s) => s.records[tenant.id] ?? {});
+  const records = useAppStore((s) => s.records[tenant.id]) ?? {};
   const on = (k: string) => modules.some((m) => m.key === k);
   const rows = (e: string): RecordRow[] => records[e] ?? [];
   const cur = tenant.currency;

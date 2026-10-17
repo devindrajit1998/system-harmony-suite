@@ -79,7 +79,7 @@ function Reports() {
   const tenant = useTenant();
   const enabled = useModules();
   const { tp } = useTerms();
-  const records = useAppStore((s) => s.records[tenant.id] ?? {});
+  const records = useAppStore((s) => s.records[tenant.id]) ?? {};
   const data = enabled.filter((m) => m.entity).map((m) => ({ name: tp(m.entity!), count: records[m.entity!]?.length ?? 0 }));
   return (
     <div>

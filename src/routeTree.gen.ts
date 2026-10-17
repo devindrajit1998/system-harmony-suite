@@ -10,7 +10,10 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppRouteImport } from './routes/app'
 import { Route as SuperRouteImport } from './routes/super'
+import { Route as AppIndexRouteImport } from './routes/app.index'
+import { Route as AppModuleRouteImport } from './routes/app.$module'
 import { Route as SuperIndexRouteImport } from './routes/super.index'
 import { Route as SuperAuditRouteImport } from './routes/super.audit'
 import { Route as SuperBundlesRouteImport } from './routes/super.bundles'
@@ -23,10 +26,25 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppRoute = AppRouteImport.update({
+  id: '/app',
+  path: '/app',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SuperRoute = SuperRouteImport.update({
   id: '/super',
   path: '/super',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AppIndexRoute = AppIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppModuleRoute = AppModuleRouteImport.update({
+  id: '/$module',
+  path: '/$module',
+  getParentRoute: () => AppRoute,
 } as any)
 const SuperIndexRoute = SuperIndexRouteImport.update({
   id: '/',
@@ -61,68 +79,85 @@ const SuperTenantsRoute = SuperTenantsRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/app': typeof AppRouteWithChildren
   '/super': typeof SuperRouteWithChildren
+  '/app/$module': typeof AppModuleRoute
   '/super/audit': typeof SuperAuditRoute
   '/super/bundles': typeof SuperBundlesRoute
   '/super/modules': typeof SuperModulesRoute
   '/super/plans': typeof SuperPlansRoute
   '/super/tenants': typeof SuperTenantsRoute
+  '/app/': typeof AppIndexRoute
   '/super/': typeof SuperIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/app/$module': typeof AppModuleRoute
   '/super/audit': typeof SuperAuditRoute
   '/super/bundles': typeof SuperBundlesRoute
   '/super/modules': typeof SuperModulesRoute
   '/super/plans': typeof SuperPlansRoute
   '/super/tenants': typeof SuperTenantsRoute
+  '/app': typeof AppIndexRoute
   '/super': typeof SuperIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/app': typeof AppRouteWithChildren
   '/super': typeof SuperRouteWithChildren
+  '/app/$module': typeof AppModuleRoute
   '/super/audit': typeof SuperAuditRoute
   '/super/bundles': typeof SuperBundlesRoute
   '/super/modules': typeof SuperModulesRoute
   '/super/plans': typeof SuperPlansRoute
   '/super/tenants': typeof SuperTenantsRoute
+  '/app/': typeof AppIndexRoute
   '/super/': typeof SuperIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/app'
     | '/super'
+    | '/app/$module'
     | '/super/audit'
     | '/super/bundles'
     | '/super/modules'
     | '/super/plans'
     | '/super/tenants'
+    | '/app/'
     | '/super/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/app/$module'
     | '/super/audit'
     | '/super/bundles'
     | '/super/modules'
     | '/super/plans'
     | '/super/tenants'
+    | '/app'
     | '/super'
   id:
     | '__root__'
     | '/'
+    | '/app'
     | '/super'
+    | '/app/$module'
     | '/super/audit'
     | '/super/bundles'
     | '/super/modules'
     | '/super/plans'
     | '/super/tenants'
+    | '/app/'
     | '/super/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRouteWithChildren
   SuperRoute: typeof SuperRouteWithChildren
 }
 
@@ -135,12 +170,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app': {
+      id: '/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/super': {
       id: '/super'
       path: '/super'
       fullPath: '/super'
       preLoaderRoute: typeof SuperRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/app/': {
+      id: '/app/'
+      path: '/'
+      fullPath: '/app/'
+      preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/$module': {
+      id: '/app/$module'
+      path: '/$module'
+      fullPath: '/app/$module'
+      preLoaderRoute: typeof AppModuleRouteImport
+      parentRoute: typeof AppRoute
     }
     '/super/': {
       id: '/super/'
@@ -187,6 +243,18 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AppRouteChildren {
+  AppModuleRoute: typeof AppModuleRoute
+  AppIndexRoute: typeof AppIndexRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppModuleRoute: AppModuleRoute,
+  AppIndexRoute: AppIndexRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
 interface SuperRouteChildren {
   SuperAuditRoute: typeof SuperAuditRoute
   SuperBundlesRoute: typeof SuperBundlesRoute
@@ -209,6 +277,7 @@ const SuperRouteWithChildren = SuperRoute._addFileChildren(SuperRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AppRoute: AppRouteWithChildren,
   SuperRoute: SuperRouteWithChildren,
 }
 export const routeTree = rootRouteImport
