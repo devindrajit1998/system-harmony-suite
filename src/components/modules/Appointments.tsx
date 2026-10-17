@@ -88,7 +88,7 @@ export function Appointments() {
   function save(values: Record<string, unknown>) {
     if (!edit) return;
     const service = services.find((r) => r.id === chosenService || r.values.name === chosenService);
-    const row = {
+    const row: RecordRow = {
       ...edit,
       values: {
         ...edit.values,

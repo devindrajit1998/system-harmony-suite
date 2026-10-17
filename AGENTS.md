@@ -18,3 +18,4 @@
 - Cross-module mutations run through tenant-gated event listeners; read-only module ports expose catalogs and eligibility. Why: disabled receivers must not execute reactions, while operational screens need controlled lookup data.
 - Operational seeds use the current local week and clock; kitchen seeds enter through events. Why: demo workflows must remain fresh and match production creation paths.
 - validateRecord is the shared validation entry point for configured forms and quick-add workflows. Why: all writers must enforce the same tenant field rules.
+- Leaf routes use unique pageHead metadata; module routes derive it from the module parameter. Why: each page needs its own search and social identity without altering the shared shell.
