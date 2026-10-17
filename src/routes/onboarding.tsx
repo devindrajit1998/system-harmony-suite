@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft, ArrowRight, Check, Mail, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
+import { DynamicForm } from "@/components/dynamic/DynamicForm";
 import { ModulePicker, PriceSummary } from "@/components/ModulePicker";
 import { TopBar } from "@/components/shell/TopBar";
 import { Button } from "@/components/ui/button";
@@ -34,7 +35,7 @@ export const Route = createFileRoute("/onboarding")({
   component: Onboarding,
 });
 
-const STEPS = ["Business", "Modules", "Fields", "Team & words", "Summary"];
+const STEPS = ["Business", "Modules", "Fields", "Terminology & Team", "Plan", "Review"];
 const COLORS = ["#E4572E", "#0E9F8E", "#D9467A", "#9A6B3F", "#3563E9", "#2F855A", "#B7791F"];
 
 function Onboarding() {
@@ -43,21 +44,24 @@ function Onboarding() {
   const navigate = useNavigate();
   const existing = s.tenants.find((t) => t.id === existingId);
   const [step, setStep] = useState(0);
+  const bundleDefaults = (key: string) => {
+    const b = s.bundles.find((x) => x.key === key) ?? s.bundles[0];
+    const fs = defaultFieldSettings(b.key);
+    for (const [e, keys] of Object.entries(b.defaultFields)) for (const k of keys) { fs[e] ??= {}; fs[e][k] = { enabled: true, required: false }; }
+    return { bundle: b.key, modules: [...b.modules], terms: { ...b.terms }, fieldSettings: fs, customFields: {} };
+  };
   const [draft, setDraft] = useState<Tenant>(() =>
     existing ? structuredClone(existing) : {
-      id: "", name: "", bundle: "gym", plan: "starter", color: COLORS[5], currency: "USD", status: "trial",
-      signupDate: new Date().toISOString().slice(0, 10), modules: [...s.bundles[0].modules], terms: { ...s.bundles[0].terms },
-      fieldSettings: defaultFieldSettings("gym"), customFields: {}, roles: [],
+      id: "", name: "", plan: "starter", color: COLORS[5], currency: "USD", status: "trial",
+      signupDate: new Date().toISOString().slice(0, 10), roles: [], ...bundleDefaults(s.bundles[0]?.key ?? "gym"),
     });
-  const [invites, setInvites] = useState<string[]>([]);
+  const [invites, setInvites] = useState<{ email: string; role: string }[]>([]);
   const [email, setEmail] = useState("");
+  const [inviteRole, setInviteRole] = useState("");
+  const [previewEntity, setPreviewEntity] = useState("");
+  const roleNames = (existing?.roles.length ? existing.roles : defaultRoles(draft.bundle, draft.modules)).map((r) => r.name);
 
-  const pickBundle = (key: string) => {
-    const b = s.bundles.find((x) => x.key === key)!;
-    const fs = defaultFieldSettings(key);
-    for (const [e, keys] of Object.entries(b.defaultFields)) for (const k of keys) fs[e] ??= {}, fs[e][k] = { enabled: true, required: false };
-    setDraft({ ...draft, bundle: key, modules: [...b.modules], terms: { ...b.terms }, fieldSettings: fs });
-  };
+  const pickBundle = (key: string) => setDraft({ ...draft, ...bundleDefaults(key) });
   const price = monthlyPrice({ plan: s.plans.find((p) => p.key === draft.plan), moduleKeys: draft.modules, modules: s.modules, bundle: draft.bundle });
   const entities = useMemo(() => [...new Set(draft.modules.map((k) => s.modules.find((m) => m.key === k)?.entity).filter(Boolean) as string[])], [draft.modules, s.modules]);
   const setField = (e: string, k: string, p: Partial<FieldSetting>) => setDraft((d) => {
@@ -113,7 +117,6 @@ function Onboarding() {
                 </div>
                 <div className="flex flex-wrap gap-6">
                   <div><Label>Brand color</Label><div className="mt-2 flex gap-2">{COLORS.map((c) => <button key={c} onClick={() => setDraft({ ...draft, color: c })} aria-label={`Color ${c}`} className={cn("h-8 w-8 rounded-full ring-offset-2 ring-offset-background", draft.color === c && "ring-2 ring-foreground")} style={{ background: c }} />)}</div></div>
-                  <div><Label>Plan</Label><Select value={draft.plan} onValueChange={(v) => setDraft({ ...draft, plan: v })}><SelectTrigger className="mt-2 w-44"><SelectValue /></SelectTrigger><SelectContent>{s.plans.map((p) => <SelectItem key={p.key} value={p.key}>{p.name} — ${p.price}</SelectItem>)}</SelectContent></Select></div>
                 </div>
               </div>
             )}
@@ -124,7 +127,8 @@ function Onboarding() {
               </div>
             )}
             {step === 2 && (
-              <div className="grid gap-4 md:grid-cols-2">
+              <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
                 {entities.map((e) => (
                   <div key={e} className="rounded-xl border bg-card p-4">
                     <h3 className="mb-3 font-semibold">{plural(draft.terms[e] || DEFAULT_TERMS[e])}</h3>
@@ -144,6 +148,15 @@ function Onboarding() {
                   </div>
                 ))}
               </div>
+              {(() => { const pe = entities.includes(previewEntity) ? previewEntity : entities[0]; if (!pe) return null; const pf = resolveFields(draft, pe); return (
+                <div className="rounded-xl border bg-card p-4 lg:sticky lg:top-20 lg:self-start">
+                  <div className="mb-3 flex items-center justify-between gap-2"><h3 className="font-semibold">Live form preview</h3>
+                    <Select value={pe} onValueChange={setPreviewEntity}><SelectTrigger className="h-8 w-40"><SelectValue /></SelectTrigger><SelectContent>{entities.map((e) => <SelectItem key={e} value={e}>{plural(draft.terms[e] || DEFAULT_TERMS[e])}</SelectItem>)}</SelectContent></Select>
+                  </div>
+                  <DynamicForm key={pe + pf.map((f) => f.key + f.required).join()} fields={pf} preview onSubmit={() => toast.success("All required fields are filled")} />
+                </div>
+              ); })()}
+              </div>
             )}
             {step === 3 && (
               <div className="grid gap-6 md:grid-cols-2">
@@ -160,24 +173,37 @@ function Onboarding() {
                 </div>
                 <div className="rounded-xl border bg-card p-4">
                   <h3 className="mb-3 font-semibold">Invite your team</h3>
-                  <form className="flex gap-2" onSubmit={(e) => { e.preventDefault(); if (/\S+@\S+\.\S+/.test(email)) { setInvites([...invites, email]); setEmail(""); } else toast.error("Enter a valid email"); }}>
+                  <form className="flex gap-2" onSubmit={(e) => { e.preventDefault(); if (!/\S+@\S+\.\S+/.test(email)) toast.error("Enter a valid email"); else if (invites.some((x) => x.email === email)) toast.error("Already invited"); else { setInvites([...invites, { email, role: inviteRole || roleNames[1] || roleNames[0] }]); setEmail(""); } }}>
                     <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="name@business.com" />
+                    <Select value={inviteRole || roleNames[1] || roleNames[0]} onValueChange={setInviteRole}><SelectTrigger className="w-36" aria-label="Role"><SelectValue /></SelectTrigger><SelectContent>{roleNames.map((n) => <SelectItem key={n} value={n}>{n}</SelectItem>)}</SelectContent></Select>
                     <Button type="submit" variant="outline"><Mail className="h-4 w-4" /> Invite</Button>
                   </form>
                   <ul className="mt-3 space-y-1 text-sm">
-                    {invites.map((i) => <li key={i} className="flex items-center justify-between rounded-md bg-muted px-3 py-1.5">{i}<button onClick={() => setInvites(invites.filter((x) => x !== i))} aria-label="Remove"><X className="h-3.5 w-3.5" /></button></li>)}
+                    {invites.map((i) => <li key={i.email} className="flex items-center justify-between gap-2 rounded-md bg-muted px-3 py-1.5"><span className="flex-1 truncate">{i.email}</span><span className="text-xs text-muted-foreground">{i.role} · pending</span><button onClick={() => setInvites(invites.filter((x) => x.email !== i.email))} aria-label="Remove"><X className="h-3.5 w-3.5" /></button></li>)}
                     {!invites.length && <li className="text-muted-foreground">No invites yet — you can skip this.</li>}
                   </ul>
                 </div>
               </div>
             )}
             {step === 4 && (
+              <div className="grid gap-4 md:grid-cols-3">
+                {s.plans.map((p) => (
+                  <button key={p.key} onClick={() => setDraft({ ...draft, plan: p.key })} className={cn("rounded-xl border bg-card p-5 text-left transition", draft.plan === p.key ? "border-primary ring-2 ring-primary/30" : "hover:border-primary/40")}>
+                    <div className="text-lg font-bold">{p.name}</div>
+                    <div className="font-display mt-1 text-3xl font-bold">${p.price}<span className="text-sm font-normal text-muted-foreground">/mo</span></div>
+                    <div className="mt-2 text-sm text-muted-foreground">{p.seats ?? "Unlimited"} seats · {p.locations ?? "Unlimited"} locations</div>
+                    <ul className="mt-2 space-y-1 text-sm">{p.features.map((f) => <li key={f} className="flex gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 text-success" />{f}</li>)}</ul>
+                  </button>
+                ))}
+              </div>
+            )}
+            {step === 5 && (
               <div className="grid gap-6 md:grid-cols-[1fr_300px]">
                 <div className="space-y-3 rounded-xl border bg-card p-5 text-sm">
-                  <div className="flex items-center gap-3"><span className="h-10 w-10 rounded-lg" style={{ background: draft.color }} /><div><div className="text-lg font-semibold">{draft.name}</div><div className="text-muted-foreground">{s.bundles.find((b) => b.key === draft.bundle)?.name} · {draft.plan} · {draft.currency}</div></div></div>
+                  <div className="flex items-center gap-3"><span className="h-10 w-10 rounded-lg" style={{ background: draft.color }} /><div><div className="text-lg font-semibold">{draft.name}</div><div className="text-muted-foreground">{s.bundles.find((b) => b.key === draft.bundle)?.name} · {s.plans.find((p) => p.key === draft.plan)?.name} · {draft.currency}</div></div></div>
                   <div><span className="text-muted-foreground">Modules:</span> {draft.modules.map((k) => s.modules.find((m) => m.key === k)?.name).join(", ")}</div>
                   <div><span className="text-muted-foreground">Terms:</span> {entities.map((e) => draft.terms[e] || DEFAULT_TERMS[e]).join(", ")}</div>
-                  <div><span className="text-muted-foreground">Invites:</span> {invites.length || "none"}</div>
+                  <div><span className="text-muted-foreground">Invites:</span> {invites.length ? invites.map((i) => `${i.email} (${i.role})`).join(", ") : "none"}</div>
                 </div>
                 <PriceSummary price={price} />
               </div>
@@ -186,7 +212,7 @@ function Onboarding() {
 
           <div className="mt-8 flex justify-between border-t pt-6">
             <Button variant="ghost" onClick={() => (step === 0 ? navigate({ to: existing ? "/app" : "/super/tenants" }) : setStep(step - 1))}><ArrowLeft className="h-4 w-4" /> {step === 0 ? "Cancel" : "Back"}</Button>
-            {step < 4 ? <Button disabled={!canNext} onClick={() => setStep(step + 1)}>Continue <ArrowRight className="h-4 w-4" /></Button> : <Button onClick={finish}><Check className="h-4 w-4" /> {existing ? "Save & open dashboard" : "Create & open dashboard"}</Button>}
+            {step < STEPS.length - 1 ? <Button disabled={!canNext} onClick={() => setStep(step + 1)}>Continue <ArrowRight className="h-4 w-4" /></Button> : <Button onClick={finish}><Check className="h-4 w-4" /> {existing ? "Save & open dashboard" : "Create & open dashboard"}</Button>}
           </div>
         </main>
       </div>
