@@ -10,33 +10,215 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppRouteImport } from './routes/app'
+import { Route as SuperRouteImport } from './routes/super'
+import { Route as AppIndexRouteImport } from './routes/app.index'
+import { Route as AppModuleRouteImport } from './routes/app.$module'
+import { Route as SuperIndexRouteImport } from './routes/super.index'
+import { Route as SuperAuditRouteImport } from './routes/super.audit'
+import { Route as SuperBundlesRouteImport } from './routes/super.bundles'
+import { Route as SuperModulesRouteImport } from './routes/super.modules'
+import { Route as SuperPlansRouteImport } from './routes/super.plans'
+import { Route as SuperTenantsRouteImport } from './routes/super.tenants'
+import { Route as AppSettingsBillingRouteImport } from './routes/app.settings.billing'
+import { Route as AppSettingsFieldsRouteImport } from './routes/app.settings.fields'
+import { Route as AppSettingsModulesRouteImport } from './routes/app.settings.modules'
+import { Route as AppSettingsRolesRouteImport } from './routes/app.settings.roles'
+import { Route as AppSettingsTerminologyRouteImport } from './routes/app.settings.terminology'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppRoute = AppRouteImport.update({
+  id: '/app',
+  path: '/app',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SuperRoute = SuperRouteImport.update({
+  id: '/super',
+  path: '/super',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppIndexRoute = AppIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppModuleRoute = AppModuleRouteImport.update({
+  id: '/$module',
+  path: '/$module',
+  getParentRoute: () => AppRoute,
+} as any)
+const SuperIndexRoute = SuperIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SuperRoute,
+} as any)
+const SuperAuditRoute = SuperAuditRouteImport.update({
+  id: '/audit',
+  path: '/audit',
+  getParentRoute: () => SuperRoute,
+} as any)
+const SuperBundlesRoute = SuperBundlesRouteImport.update({
+  id: '/bundles',
+  path: '/bundles',
+  getParentRoute: () => SuperRoute,
+} as any)
+const SuperModulesRoute = SuperModulesRouteImport.update({
+  id: '/modules',
+  path: '/modules',
+  getParentRoute: () => SuperRoute,
+} as any)
+const SuperPlansRoute = SuperPlansRouteImport.update({
+  id: '/plans',
+  path: '/plans',
+  getParentRoute: () => SuperRoute,
+} as any)
+const SuperTenantsRoute = SuperTenantsRouteImport.update({
+  id: '/tenants',
+  path: '/tenants',
+  getParentRoute: () => SuperRoute,
+} as any)
+const AppSettingsBillingRoute = AppSettingsBillingRouteImport.update({
+  id: '/settings/billing',
+  path: '/settings/billing',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSettingsFieldsRoute = AppSettingsFieldsRouteImport.update({
+  id: '/settings/fields',
+  path: '/settings/fields',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSettingsModulesRoute = AppSettingsModulesRouteImport.update({
+  id: '/settings/modules',
+  path: '/settings/modules',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSettingsRolesRoute = AppSettingsRolesRouteImport.update({
+  id: '/settings/roles',
+  path: '/settings/roles',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSettingsTerminologyRoute = AppSettingsTerminologyRouteImport.update({
+  id: '/settings/terminology',
+  path: '/settings/terminology',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/app': typeof AppRouteWithChildren
+  '/super': typeof SuperRouteWithChildren
+  '/app/$module': typeof AppModuleRoute
+  '/super/audit': typeof SuperAuditRoute
+  '/super/bundles': typeof SuperBundlesRoute
+  '/super/modules': typeof SuperModulesRoute
+  '/super/plans': typeof SuperPlansRoute
+  '/super/tenants': typeof SuperTenantsRoute
+  '/app/': typeof AppIndexRoute
+  '/super/': typeof SuperIndexRoute
+  '/app/settings/billing': typeof AppSettingsBillingRoute
+  '/app/settings/fields': typeof AppSettingsFieldsRoute
+  '/app/settings/modules': typeof AppSettingsModulesRoute
+  '/app/settings/roles': typeof AppSettingsRolesRoute
+  '/app/settings/terminology': typeof AppSettingsTerminologyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/app/$module': typeof AppModuleRoute
+  '/super/audit': typeof SuperAuditRoute
+  '/super/bundles': typeof SuperBundlesRoute
+  '/super/modules': typeof SuperModulesRoute
+  '/super/plans': typeof SuperPlansRoute
+  '/super/tenants': typeof SuperTenantsRoute
+  '/app': typeof AppIndexRoute
+  '/super': typeof SuperIndexRoute
+  '/app/settings/billing': typeof AppSettingsBillingRoute
+  '/app/settings/fields': typeof AppSettingsFieldsRoute
+  '/app/settings/modules': typeof AppSettingsModulesRoute
+  '/app/settings/roles': typeof AppSettingsRolesRoute
+  '/app/settings/terminology': typeof AppSettingsTerminologyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/app': typeof AppRouteWithChildren
+  '/super': typeof SuperRouteWithChildren
+  '/app/$module': typeof AppModuleRoute
+  '/super/audit': typeof SuperAuditRoute
+  '/super/bundles': typeof SuperBundlesRoute
+  '/super/modules': typeof SuperModulesRoute
+  '/super/plans': typeof SuperPlansRoute
+  '/super/tenants': typeof SuperTenantsRoute
+  '/app/': typeof AppIndexRoute
+  '/super/': typeof SuperIndexRoute
+  '/app/settings/billing': typeof AppSettingsBillingRoute
+  '/app/settings/fields': typeof AppSettingsFieldsRoute
+  '/app/settings/modules': typeof AppSettingsModulesRoute
+  '/app/settings/roles': typeof AppSettingsRolesRoute
+  '/app/settings/terminology': typeof AppSettingsTerminologyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/app'
+    | '/super'
+    | '/app/$module'
+    | '/super/audit'
+    | '/super/bundles'
+    | '/super/modules'
+    | '/super/plans'
+    | '/super/tenants'
+    | '/app/'
+    | '/super/'
+    | '/app/settings/billing'
+    | '/app/settings/fields'
+    | '/app/settings/modules'
+    | '/app/settings/roles'
+    | '/app/settings/terminology'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/app/$module'
+    | '/super/audit'
+    | '/super/bundles'
+    | '/super/modules'
+    | '/super/plans'
+    | '/super/tenants'
+    | '/app'
+    | '/super'
+    | '/app/settings/billing'
+    | '/app/settings/fields'
+    | '/app/settings/modules'
+    | '/app/settings/roles'
+    | '/app/settings/terminology'
+  id:
+    | '__root__'
+    | '/'
+    | '/app'
+    | '/super'
+    | '/app/$module'
+    | '/super/audit'
+    | '/super/bundles'
+    | '/super/modules'
+    | '/super/plans'
+    | '/super/tenants'
+    | '/app/'
+    | '/super/'
+    | '/app/settings/billing'
+    | '/app/settings/fields'
+    | '/app/settings/modules'
+    | '/app/settings/roles'
+    | '/app/settings/terminology'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRouteWithChildren
+  SuperRoute: typeof SuperRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +230,160 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app': {
+      id: '/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/super': {
+      id: '/super'
+      path: '/super'
+      fullPath: '/super'
+      preLoaderRoute: typeof SuperRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/app/': {
+      id: '/app/'
+      path: '/'
+      fullPath: '/app/'
+      preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/$module': {
+      id: '/app/$module'
+      path: '/$module'
+      fullPath: '/app/$module'
+      preLoaderRoute: typeof AppModuleRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/super/': {
+      id: '/super/'
+      path: '/'
+      fullPath: '/super/'
+      preLoaderRoute: typeof SuperIndexRouteImport
+      parentRoute: typeof SuperRoute
+    }
+    '/super/audit': {
+      id: '/super/audit'
+      path: '/audit'
+      fullPath: '/super/audit'
+      preLoaderRoute: typeof SuperAuditRouteImport
+      parentRoute: typeof SuperRoute
+    }
+    '/super/bundles': {
+      id: '/super/bundles'
+      path: '/bundles'
+      fullPath: '/super/bundles'
+      preLoaderRoute: typeof SuperBundlesRouteImport
+      parentRoute: typeof SuperRoute
+    }
+    '/super/modules': {
+      id: '/super/modules'
+      path: '/modules'
+      fullPath: '/super/modules'
+      preLoaderRoute: typeof SuperModulesRouteImport
+      parentRoute: typeof SuperRoute
+    }
+    '/super/plans': {
+      id: '/super/plans'
+      path: '/plans'
+      fullPath: '/super/plans'
+      preLoaderRoute: typeof SuperPlansRouteImport
+      parentRoute: typeof SuperRoute
+    }
+    '/super/tenants': {
+      id: '/super/tenants'
+      path: '/tenants'
+      fullPath: '/super/tenants'
+      preLoaderRoute: typeof SuperTenantsRouteImport
+      parentRoute: typeof SuperRoute
+    }
+    '/app/settings/billing': {
+      id: '/app/settings/billing'
+      path: '/settings/billing'
+      fullPath: '/app/settings/billing'
+      preLoaderRoute: typeof AppSettingsBillingRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/settings/fields': {
+      id: '/app/settings/fields'
+      path: '/settings/fields'
+      fullPath: '/app/settings/fields'
+      preLoaderRoute: typeof AppSettingsFieldsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/settings/modules': {
+      id: '/app/settings/modules'
+      path: '/settings/modules'
+      fullPath: '/app/settings/modules'
+      preLoaderRoute: typeof AppSettingsModulesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/settings/roles': {
+      id: '/app/settings/roles'
+      path: '/settings/roles'
+      fullPath: '/app/settings/roles'
+      preLoaderRoute: typeof AppSettingsRolesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/settings/terminology': {
+      id: '/app/settings/terminology'
+      path: '/settings/terminology'
+      fullPath: '/app/settings/terminology'
+      preLoaderRoute: typeof AppSettingsTerminologyRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
+interface AppRouteChildren {
+  AppModuleRoute: typeof AppModuleRoute
+  AppIndexRoute: typeof AppIndexRoute
+  AppSettingsBillingRoute: typeof AppSettingsBillingRoute
+  AppSettingsFieldsRoute: typeof AppSettingsFieldsRoute
+  AppSettingsModulesRoute: typeof AppSettingsModulesRoute
+  AppSettingsRolesRoute: typeof AppSettingsRolesRoute
+  AppSettingsTerminologyRoute: typeof AppSettingsTerminologyRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppModuleRoute: AppModuleRoute,
+  AppIndexRoute: AppIndexRoute,
+  AppSettingsBillingRoute: AppSettingsBillingRoute,
+  AppSettingsFieldsRoute: AppSettingsFieldsRoute,
+  AppSettingsModulesRoute: AppSettingsModulesRoute,
+  AppSettingsRolesRoute: AppSettingsRolesRoute,
+  AppSettingsTerminologyRoute: AppSettingsTerminologyRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
+interface SuperRouteChildren {
+  SuperAuditRoute: typeof SuperAuditRoute
+  SuperBundlesRoute: typeof SuperBundlesRoute
+  SuperModulesRoute: typeof SuperModulesRoute
+  SuperPlansRoute: typeof SuperPlansRoute
+  SuperTenantsRoute: typeof SuperTenantsRoute
+  SuperIndexRoute: typeof SuperIndexRoute
+}
+
+const SuperRouteChildren: SuperRouteChildren = {
+  SuperAuditRoute: SuperAuditRoute,
+  SuperBundlesRoute: SuperBundlesRoute,
+  SuperModulesRoute: SuperModulesRoute,
+  SuperPlansRoute: SuperPlansRoute,
+  SuperTenantsRoute: SuperTenantsRoute,
+  SuperIndexRoute: SuperIndexRoute,
+}
+
+const SuperRouteWithChildren = SuperRoute._addFileChildren(SuperRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AppRoute: AppRouteWithChildren,
+  SuperRoute: SuperRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
