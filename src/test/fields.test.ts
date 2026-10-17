@@ -70,3 +70,11 @@ describe("metadata engine hardening", () => {
     expect(runIsolationChecks(tenants, records, BUNDLES).every((c) => c.pass)).toBe(true);
   });
 });
+
+describe("isolation page with nothing to compare", () => {
+  it("fails every check instead of passing when there is no data", async () => {
+    const { runIsolationChecks } = await import("@/lib/isolation");
+    const checks = runIsolationChecks([], {}, []);
+    expect(checks.map((c) => c.pass)).toEqual([false, false, false, false]);
+  });
+});
