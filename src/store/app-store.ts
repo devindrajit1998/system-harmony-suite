@@ -265,6 +265,7 @@ export const useAppStore = create<Data & Actions>()(
         for (const t of data.tenants) {
           if (t.id === 'glow' && t.modules.includes('pos') && !t.modules.includes('products')) t.modules.push('products');
           const records = (data.records[t.id] ??= {});
+          if (t.id === 'glow' && !records.product?.length) records.product=upgraded[t.id]?.product ?? [];
           for (const entity of [
             "appointment",
             "membership",

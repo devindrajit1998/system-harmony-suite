@@ -21,6 +21,7 @@ import type { RecordRow } from "@/data/types";
 import { useAppStore } from "@/store/app-store";
 import { clock, minuteOfDay, overlaps, staffPort, servicePort, localDate } from "@/lib/operations";
 import { newRow } from "@/lib/module-events";
+import { validateRecord } from '@/lib/validation';
 import { OperationsSettings, useOperationSettings } from "./OperationsSettings";
 const staffColors = [
   "border-chart-1",
@@ -104,6 +105,8 @@ export function Appointments() {
       toast.error(`Choose a ${t("staff").toLowerCase()}`);
       return;
     }
+    const errs=validateRecord('appointment',row.values);
+    if(Object.keys(errs).length){toast.error(Object.values(errs)[0]);return;}
     if (overlaps(records, row)) {
       toast.error(
         `Overlapping ${t("appointment").toLowerCase()} for this ${t("staff").toLowerCase()}`,
@@ -111,6 +114,7 @@ export function Appointments() {
       return;
     }
     upsert(tenant.id, "appointment", row);
+    if(row.values.status==='Completed' && edit.values.status!=='Completed') emit('appointment.completed',{tenantId:tenant.id,sourceId:row.id,customer:String(row.values.customer),amount:Number(row.values.amount??0)});
     setEdit(null);
     toast.success(`${t("appointment")} saved`);
   }
@@ -118,6 +122,7 @@ export function Appointments() {
     const old = records.find((r) => r.id === id);
     if (!old) return;
     const row = { ...old, values: { ...old.values, date: d, time, staff: staffName } };
+    if(Object.keys(validateRecord('appointment',row.values)).length){toast.error(`${t('appointment')} has invalid fields`);return;}
     if (overlaps(records, row)) {
       toast.error(`Overlapping ${t("appointment").toLowerCase()} — moved back`);
       return;
