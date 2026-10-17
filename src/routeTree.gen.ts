@@ -20,6 +20,11 @@ import { Route as SuperBundlesRouteImport } from './routes/super.bundles'
 import { Route as SuperModulesRouteImport } from './routes/super.modules'
 import { Route as SuperPlansRouteImport } from './routes/super.plans'
 import { Route as SuperTenantsRouteImport } from './routes/super.tenants'
+import { Route as AppSettingsBillingRouteImport } from './routes/app.settings.billing'
+import { Route as AppSettingsFieldsRouteImport } from './routes/app.settings.fields'
+import { Route as AppSettingsModulesRouteImport } from './routes/app.settings.modules'
+import { Route as AppSettingsRolesRouteImport } from './routes/app.settings.roles'
+import { Route as AppSettingsTerminologyRouteImport } from './routes/app.settings.terminology'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -76,6 +81,31 @@ const SuperTenantsRoute = SuperTenantsRouteImport.update({
   path: '/tenants',
   getParentRoute: () => SuperRoute,
 } as any)
+const AppSettingsBillingRoute = AppSettingsBillingRouteImport.update({
+  id: '/settings/billing',
+  path: '/settings/billing',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSettingsFieldsRoute = AppSettingsFieldsRouteImport.update({
+  id: '/settings/fields',
+  path: '/settings/fields',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSettingsModulesRoute = AppSettingsModulesRouteImport.update({
+  id: '/settings/modules',
+  path: '/settings/modules',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSettingsRolesRoute = AppSettingsRolesRouteImport.update({
+  id: '/settings/roles',
+  path: '/settings/roles',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSettingsTerminologyRoute = AppSettingsTerminologyRouteImport.update({
+  id: '/settings/terminology',
+  path: '/settings/terminology',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -89,6 +119,11 @@ export interface FileRoutesByFullPath {
   '/super/tenants': typeof SuperTenantsRoute
   '/app/': typeof AppIndexRoute
   '/super/': typeof SuperIndexRoute
+  '/app/settings/billing': typeof AppSettingsBillingRoute
+  '/app/settings/fields': typeof AppSettingsFieldsRoute
+  '/app/settings/modules': typeof AppSettingsModulesRoute
+  '/app/settings/roles': typeof AppSettingsRolesRoute
+  '/app/settings/terminology': typeof AppSettingsTerminologyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -100,6 +135,11 @@ export interface FileRoutesByTo {
   '/super/tenants': typeof SuperTenantsRoute
   '/app': typeof AppIndexRoute
   '/super': typeof SuperIndexRoute
+  '/app/settings/billing': typeof AppSettingsBillingRoute
+  '/app/settings/fields': typeof AppSettingsFieldsRoute
+  '/app/settings/modules': typeof AppSettingsModulesRoute
+  '/app/settings/roles': typeof AppSettingsRolesRoute
+  '/app/settings/terminology': typeof AppSettingsTerminologyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -114,6 +154,11 @@ export interface FileRoutesById {
   '/super/tenants': typeof SuperTenantsRoute
   '/app/': typeof AppIndexRoute
   '/super/': typeof SuperIndexRoute
+  '/app/settings/billing': typeof AppSettingsBillingRoute
+  '/app/settings/fields': typeof AppSettingsFieldsRoute
+  '/app/settings/modules': typeof AppSettingsModulesRoute
+  '/app/settings/roles': typeof AppSettingsRolesRoute
+  '/app/settings/terminology': typeof AppSettingsTerminologyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -129,6 +174,11 @@ export interface FileRouteTypes {
     | '/super/tenants'
     | '/app/'
     | '/super/'
+    | '/app/settings/billing'
+    | '/app/settings/fields'
+    | '/app/settings/modules'
+    | '/app/settings/roles'
+    | '/app/settings/terminology'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -140,6 +190,11 @@ export interface FileRouteTypes {
     | '/super/tenants'
     | '/app'
     | '/super'
+    | '/app/settings/billing'
+    | '/app/settings/fields'
+    | '/app/settings/modules'
+    | '/app/settings/roles'
+    | '/app/settings/terminology'
   id:
     | '__root__'
     | '/'
@@ -153,6 +208,11 @@ export interface FileRouteTypes {
     | '/super/tenants'
     | '/app/'
     | '/super/'
+    | '/app/settings/billing'
+    | '/app/settings/fields'
+    | '/app/settings/modules'
+    | '/app/settings/roles'
+    | '/app/settings/terminology'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -240,17 +300,62 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SuperTenantsRouteImport
       parentRoute: typeof SuperRoute
     }
+    '/app/settings/billing': {
+      id: '/app/settings/billing'
+      path: '/settings/billing'
+      fullPath: '/app/settings/billing'
+      preLoaderRoute: typeof AppSettingsBillingRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/settings/fields': {
+      id: '/app/settings/fields'
+      path: '/settings/fields'
+      fullPath: '/app/settings/fields'
+      preLoaderRoute: typeof AppSettingsFieldsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/settings/modules': {
+      id: '/app/settings/modules'
+      path: '/settings/modules'
+      fullPath: '/app/settings/modules'
+      preLoaderRoute: typeof AppSettingsModulesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/settings/roles': {
+      id: '/app/settings/roles'
+      path: '/settings/roles'
+      fullPath: '/app/settings/roles'
+      preLoaderRoute: typeof AppSettingsRolesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/settings/terminology': {
+      id: '/app/settings/terminology'
+      path: '/settings/terminology'
+      fullPath: '/app/settings/terminology'
+      preLoaderRoute: typeof AppSettingsTerminologyRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
 interface AppRouteChildren {
   AppModuleRoute: typeof AppModuleRoute
   AppIndexRoute: typeof AppIndexRoute
+  AppSettingsBillingRoute: typeof AppSettingsBillingRoute
+  AppSettingsFieldsRoute: typeof AppSettingsFieldsRoute
+  AppSettingsModulesRoute: typeof AppSettingsModulesRoute
+  AppSettingsRolesRoute: typeof AppSettingsRolesRoute
+  AppSettingsTerminologyRoute: typeof AppSettingsTerminologyRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppModuleRoute: AppModuleRoute,
   AppIndexRoute: AppIndexRoute,
+  AppSettingsBillingRoute: AppSettingsBillingRoute,
+  AppSettingsFieldsRoute: AppSettingsFieldsRoute,
+  AppSettingsModulesRoute: AppSettingsModulesRoute,
+  AppSettingsRolesRoute: AppSettingsRolesRoute,
+  AppSettingsTerminologyRoute: AppSettingsTerminologyRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
