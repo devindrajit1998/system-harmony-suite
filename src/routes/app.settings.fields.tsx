@@ -61,7 +61,8 @@ function FieldBuilder() {
     if (!dlg) return;
     const label = dlg.f.label.trim();
     if (!label) return toast.error("Give the field a label");
-    if (!dlg.orig && all.some((f) => f.label.toLowerCase() === label.toLowerCase())) return toast.error("A field with that name already exists");
+    const clash = all.find((f) => f.key !== dlg.orig && f.label.toLowerCase() === label.toLowerCase());
+    if (clash) return toast.error(clash.deprecated ? `A deprecated field is already called "${clash.label}". Restore it, or use a different name.` : "A field with that name already exists");
     const key = dlg.orig ?? `cf_${tenant.id}_${uid()}`;
     const hasOpts = ["select", "multiselect"].includes(dlg.f.type);
     if (hasOpts && !dlg.options.some((o) => !dlg.retired.includes(o))) return toast.error("Add at least one option");
