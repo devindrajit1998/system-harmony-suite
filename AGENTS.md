@@ -13,3 +13,5 @@
 - Demo is front-end only: all state lives in one persisted Zustand store (src/store), seeded from typed config in src/data; reset re-runs the seed. Why: spec forbids a backend.
 - Module pages, forms and tables render from field config (resolveFields + DynamicForm/DynamicTable); never hand-code per-module screens. Why: business types are configuration.
 - tsconfig relaxes indexed-access/exact-optional checks because the app is metadata-driven with dynamic record keys.
+- Custom field ids are `cf_<tenantId>_<id>` and record values are keyed by id, never by label; fields are soft-deprecated, not deleted. Why: renames and per-tenant isolation must never orphan data.
+- Tenants snapshot their bundle via bundleSnapshot() at creation; bundle edits never touch existing tenants. Why: bundles are templates for future tenants only.
