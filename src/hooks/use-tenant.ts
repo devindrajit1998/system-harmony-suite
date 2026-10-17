@@ -12,12 +12,18 @@ export function termFor(tenant: Tenant | undefined, key: string) {
   return tenant?.terms[key] || DEFAULT_TERMS[key] || key;
 }
 
-export function resolveFields(tenant: Tenant, entity: string, includeDisabled = false): (ResolvedField & { enabled: boolean })[] {
+export function resolveFields(tenant: Tenant, entity: string, includeDisabled = false, includeDeprecated = false): (ResolvedField & { enabled: boolean })[] {
   const def = ENTITY_MAP[entity];
   if (!def) return [];
   const settings = tenant.fieldSettings[entity] ?? {};
   const all = [...def.fields, ...(tenant.customFields[entity] ?? [])];
+  const order = tenant.fieldOrder?.[entity];
+  if (order?.length) {
+    const idx = (k: string) => { const i = order.indexOf(k); return i < 0 ? order.length + all.findIndex((f) => f.key === k) : i; };
+    all.sort((a, b) => idx(a.key) - idx(b.key));
+  }
   return all
+    .filter((f) => includeDeprecated || !f.deprecated)
     .map((f) => {
       const st = settings[f.key];
       const enabled = f.tier === "system" ? true : f.tier === "custom" ? (st?.enabled ?? true) : !!st?.enabled;

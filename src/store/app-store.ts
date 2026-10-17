@@ -30,7 +30,8 @@ interface Actions {
   setFieldSetting: (tenantId: string, entity: string, key: string, patch: Partial<FieldSetting>) => void;
   saveCustomField: (tenantId: string, entity: string, field: FieldDef, originalKey?: string) => void;
   deleteCustomField: (tenantId: string, entity: string, key: string) => void;
-  moveCustomField: (tenantId: string, entity: string, key: string, dir: -1 | 1) => void;
+  setCustomFieldDeprecated: (tenantId: string, entity: string, key: string, deprecated: boolean) => void;
+  setFieldOrder: (tenantId: string, entity: string, keys: string[] | null) => void;
   setPerm: (tenantId: string, roleId: string, module: string, action: keyof Perm, v: boolean) => void;
   saveModule: (m: ModuleDef, originalKey?: string) => void;
   saveBundle: (b: BundleDef, originalKey?: string) => void;
@@ -85,13 +86,17 @@ export const useAppStore = create<Data & Actions>()(
           const t = tenant(s, tid);
           t.customFields[entity] = (t.customFields[entity] ?? []).filter((f) => f.key !== key);
           delete t.fieldSettings[entity]?.[key];
+          for (const r of s.records[tid]?.[entity] ?? []) delete r.values[key];
+          if (t.fieldOrder?.[entity]) t.fieldOrder[entity] = t.fieldOrder[entity].filter((k) => k !== key);
         }),
-        moveCustomField: (tid, entity, key, dir) => set((s) => {
-          const list = tenant(s, tid).customFields[entity] ?? [];
-          const i = list.findIndex((f) => f.key === key);
-          const j = i + dir;
-          if (i < 0 || j < 0 || j >= list.length) return;
-          [list[i], list[j]] = [list[j], list[i]];
+        setCustomFieldDeprecated: (tid, entity, key, v) => set((s) => {
+          const f = (tenant(s, tid).customFields[entity] ?? []).find((x) => x.key === key);
+          if (f) f.deprecated = v;
+        }),
+        setFieldOrder: (tid, entity, keys) => set((s) => {
+          const t = tenant(s, tid);
+          t.fieldOrder ??= {};
+          if (keys) t.fieldOrder[entity] = keys; else delete t.fieldOrder[entity];
         }),
         setPerm: (tid, roleId, module, action, v) => set((s) => {
           const r = tenant(s, tid).roles.find((x) => x.id === roleId)!;
@@ -109,6 +114,6 @@ export const useAppStore = create<Data & Actions>()(
         savePlan: (p) => set((s) => { const i = s.plans.findIndex((x) => x.key === p.key); s.plans[i] = p; }),
       };
     }),
-    { name: "modular-saas-demo-v1", storage: createJSONStorage(() => localStorage), skipHydration: true },
+    { name: "modular-saas-demo-v2", storage: createJSONStorage(() => localStorage), skipHydration: true },
   ),
 );

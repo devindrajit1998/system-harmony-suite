@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { Switch } from "@/components/ui/switch";
 import { DEFAULT_TERMS } from "@/data/catalog";
-import { defaultFieldSettings, defaultRoles, uid } from "@/data/seed";
+import { bundleSnapshot, defaultRoles, uid } from "@/data/seed";
 import type { FieldSetting, Tenant } from "@/data/types";
 import { resolveFields } from "@/hooks/use-tenant";
 import { iconFor } from "@/lib/icons";
@@ -46,9 +46,7 @@ function Onboarding() {
   const [step, setStep] = useState(0);
   const bundleDefaults = (key: string) => {
     const b = s.bundles.find((x) => x.key === key) ?? s.bundles[0];
-    const fs = defaultFieldSettings(b.key);
-    for (const [e, keys] of Object.entries(b.defaultFields)) for (const k of keys) { fs[e] ??= {}; fs[e][k] = { enabled: true, required: false }; }
-    return { bundle: b.key, modules: [...b.modules], terms: { ...b.terms }, fieldSettings: fs, customFields: {} };
+    return bundleSnapshot(structuredClone(b));
   };
   const [draft, setDraft] = useState<Tenant>(() =>
     existing ? structuredClone(existing) : {
