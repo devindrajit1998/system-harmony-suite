@@ -10,33 +10,51 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SuperRouteImport } from './routes/super'
+import { Route as SuperIndexRouteImport } from './routes/super.index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SuperRoute = SuperRouteImport.update({
+  id: '/super',
+  path: '/super',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SuperIndexRoute = SuperIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SuperRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/super': typeof SuperRouteWithChildren
+  '/super/': typeof SuperIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/super': typeof SuperIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/super': typeof SuperRouteWithChildren
+  '/super/': typeof SuperIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/super' | '/super/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/super'
+  id: '__root__' | '/' | '/super' | '/super/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  SuperRoute: typeof SuperRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +66,36 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/super': {
+      id: '/super'
+      path: '/super'
+      fullPath: '/super'
+      preLoaderRoute: typeof SuperRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/super/': {
+      id: '/super/'
+      path: '/'
+      fullPath: '/super/'
+      preLoaderRoute: typeof SuperIndexRouteImport
+      parentRoute: typeof SuperRoute
+    }
   }
 }
 
+interface SuperRouteChildren {
+  SuperIndexRoute: typeof SuperIndexRoute
+}
+
+const SuperRouteChildren: SuperRouteChildren = {
+  SuperIndexRoute: SuperIndexRoute,
+}
+
+const SuperRouteWithChildren = SuperRoute._addFileChildren(SuperRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  SuperRoute: SuperRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
