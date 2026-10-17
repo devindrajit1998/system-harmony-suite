@@ -42,7 +42,7 @@ function TenantsPage() {
 
   return (
     <div>
-      <PageHeader title="Tenants" description={`${s.tenants.length} businesses on the platform`} actions={<Button asChild><Link to="/onboarding"><Plus className="h-4 w-4" /> Add tenant</Link></Button>} />
+      <PageHeader title="Tenants" description={`${s.tenants.length} businesses on the platform`} actions={<Button asChild><Link to="/onboarding" search={{ tenant: undefined }}><Plus className="h-4 w-4" /> Add tenant</Link></Button>} />
       <div className="mb-3 flex flex-wrap gap-2">
         {filter("type", s.bundles.map((b) => [b.key, b.name]), "types")}
         {filter("plan", s.plans.map((p) => [p.key, p.name]), "plans")}

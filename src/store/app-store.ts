@@ -72,7 +72,7 @@ export const useAppStore = create<Data & Actions>()(
         }),
         setFieldSetting: (tid, entity, key, patch) => set((s) => {
           const fs = (tenant(s, tid).fieldSettings[entity] ??= {});
-          fs[key] = { enabled: false, required: false, ...fs[key], ...patch };
+          fs[key] = { ...(fs[key] ?? { enabled: false, required: false }), ...patch };
           if (patch.enabled === false) fs[key].required = false;
           if (patch.required) fs[key].enabled = true;
         }),
