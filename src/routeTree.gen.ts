@@ -12,6 +12,11 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SuperRouteImport } from './routes/super'
 import { Route as SuperIndexRouteImport } from './routes/super.index'
+import { Route as SuperAuditRouteImport } from './routes/super.audit'
+import { Route as SuperBundlesRouteImport } from './routes/super.bundles'
+import { Route as SuperModulesRouteImport } from './routes/super.modules'
+import { Route as SuperPlansRouteImport } from './routes/super.plans'
+import { Route as SuperTenantsRouteImport } from './routes/super.tenants'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -28,28 +33,92 @@ const SuperIndexRoute = SuperIndexRouteImport.update({
   path: '/',
   getParentRoute: () => SuperRoute,
 } as any)
+const SuperAuditRoute = SuperAuditRouteImport.update({
+  id: '/audit',
+  path: '/audit',
+  getParentRoute: () => SuperRoute,
+} as any)
+const SuperBundlesRoute = SuperBundlesRouteImport.update({
+  id: '/bundles',
+  path: '/bundles',
+  getParentRoute: () => SuperRoute,
+} as any)
+const SuperModulesRoute = SuperModulesRouteImport.update({
+  id: '/modules',
+  path: '/modules',
+  getParentRoute: () => SuperRoute,
+} as any)
+const SuperPlansRoute = SuperPlansRouteImport.update({
+  id: '/plans',
+  path: '/plans',
+  getParentRoute: () => SuperRoute,
+} as any)
+const SuperTenantsRoute = SuperTenantsRouteImport.update({
+  id: '/tenants',
+  path: '/tenants',
+  getParentRoute: () => SuperRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/super': typeof SuperRouteWithChildren
+  '/super/audit': typeof SuperAuditRoute
+  '/super/bundles': typeof SuperBundlesRoute
+  '/super/modules': typeof SuperModulesRoute
+  '/super/plans': typeof SuperPlansRoute
+  '/super/tenants': typeof SuperTenantsRoute
   '/super/': typeof SuperIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/super/audit': typeof SuperAuditRoute
+  '/super/bundles': typeof SuperBundlesRoute
+  '/super/modules': typeof SuperModulesRoute
+  '/super/plans': typeof SuperPlansRoute
+  '/super/tenants': typeof SuperTenantsRoute
   '/super': typeof SuperIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/super': typeof SuperRouteWithChildren
+  '/super/audit': typeof SuperAuditRoute
+  '/super/bundles': typeof SuperBundlesRoute
+  '/super/modules': typeof SuperModulesRoute
+  '/super/plans': typeof SuperPlansRoute
+  '/super/tenants': typeof SuperTenantsRoute
   '/super/': typeof SuperIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/super' | '/super/'
+  fullPaths:
+    | '/'
+    | '/super'
+    | '/super/audit'
+    | '/super/bundles'
+    | '/super/modules'
+    | '/super/plans'
+    | '/super/tenants'
+    | '/super/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/super'
-  id: '__root__' | '/' | '/super' | '/super/'
+  to:
+    | '/'
+    | '/super/audit'
+    | '/super/bundles'
+    | '/super/modules'
+    | '/super/plans'
+    | '/super/tenants'
+    | '/super'
+  id:
+    | '__root__'
+    | '/'
+    | '/super'
+    | '/super/audit'
+    | '/super/bundles'
+    | '/super/modules'
+    | '/super/plans'
+    | '/super/tenants'
+    | '/super/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -80,14 +149,59 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SuperIndexRouteImport
       parentRoute: typeof SuperRoute
     }
+    '/super/audit': {
+      id: '/super/audit'
+      path: '/audit'
+      fullPath: '/super/audit'
+      preLoaderRoute: typeof SuperAuditRouteImport
+      parentRoute: typeof SuperRoute
+    }
+    '/super/bundles': {
+      id: '/super/bundles'
+      path: '/bundles'
+      fullPath: '/super/bundles'
+      preLoaderRoute: typeof SuperBundlesRouteImport
+      parentRoute: typeof SuperRoute
+    }
+    '/super/modules': {
+      id: '/super/modules'
+      path: '/modules'
+      fullPath: '/super/modules'
+      preLoaderRoute: typeof SuperModulesRouteImport
+      parentRoute: typeof SuperRoute
+    }
+    '/super/plans': {
+      id: '/super/plans'
+      path: '/plans'
+      fullPath: '/super/plans'
+      preLoaderRoute: typeof SuperPlansRouteImport
+      parentRoute: typeof SuperRoute
+    }
+    '/super/tenants': {
+      id: '/super/tenants'
+      path: '/tenants'
+      fullPath: '/super/tenants'
+      preLoaderRoute: typeof SuperTenantsRouteImport
+      parentRoute: typeof SuperRoute
+    }
   }
 }
 
 interface SuperRouteChildren {
+  SuperAuditRoute: typeof SuperAuditRoute
+  SuperBundlesRoute: typeof SuperBundlesRoute
+  SuperModulesRoute: typeof SuperModulesRoute
+  SuperPlansRoute: typeof SuperPlansRoute
+  SuperTenantsRoute: typeof SuperTenantsRoute
   SuperIndexRoute: typeof SuperIndexRoute
 }
 
 const SuperRouteChildren: SuperRouteChildren = {
+  SuperAuditRoute: SuperAuditRoute,
+  SuperBundlesRoute: SuperBundlesRoute,
+  SuperModulesRoute: SuperModulesRoute,
+  SuperPlansRoute: SuperPlansRoute,
+  SuperTenantsRoute: SuperTenantsRoute,
   SuperIndexRoute: SuperIndexRoute,
 }
 
