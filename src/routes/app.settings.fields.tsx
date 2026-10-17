@@ -118,7 +118,7 @@ function FieldBuilder() {
                 </Select>
               </div>
               {["select", "multiselect"].includes(dlg.f.type) && (
-                <div className="space-y-1.5"><Label>Options (comma separated)</Label><Input value={dlg.optText} onChange={(e) => setDlg({ ...dlg, optText: e.target.value })} placeholder="Morning, Afternoon, Evening" /></div>
+                <OptionsEditor value={dlg.optText.split(",").map((o) => o.trim()).filter(Boolean)} onChange={(o) => setDlg({ ...dlg, optText: o.join(", ") })} />
               )}
               <label className="flex items-center gap-2 text-sm"><Switch checked={!!dlg.f.required} onCheckedChange={(v) => setDlg({ ...dlg, f: { ...dlg.f, required: v } })} /> Required</label>
             </div>
@@ -126,6 +126,37 @@ function FieldBuilder() {
           <DialogFooter><Button variant="outline" onClick={() => setDlg(null)}>Cancel</Button><Button onClick={saveCustom}>Save field</Button></DialogFooter>
         </DialogContent>
       </Dialog>
+    </div>
+  );
+}
+
+function OptionsEditor({ value, onChange }: { value: string[]; onChange: (v: string[]) => void }) {
+  const [text, setText] = useState("");
+  const add = () => {
+    const v = text.trim().replace(/,/g, "");
+    if (!v) return;
+    if (value.some((o) => o.toLowerCase() === v.toLowerCase())) return toast.error("That option already exists");
+    onChange([...value, v]); setText("");
+  };
+  const move = (i: number, d: number) => { const n = [...value]; const j = i + d; if (j < 0 || j >= n.length) return; [n[i], n[j]] = [n[j], n[i]]; onChange(n); };
+  return (
+    <div className="space-y-1.5">
+      <Label>Options</Label>
+      <div className="flex gap-2">
+        <Input value={text} onChange={(e) => setText(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); add(); } }} placeholder="e.g. Morning" aria-label="New option" />
+        <Button type="button" variant="outline" onClick={add}><Plus className="h-4 w-4" /> Add</Button>
+      </div>
+      <ul className="space-y-1">
+        {value.map((o, i) => (
+          <li key={o} className="flex items-center gap-1 rounded-md bg-muted px-2 py-1 text-sm">
+            <span className="flex-1">{o}</span>
+            <Button type="button" size="icon" variant="ghost" className="h-7 w-7" disabled={i === 0} onClick={() => move(i, -1)} aria-label={`Move ${o} up`}><ArrowUp className="h-3.5 w-3.5" /></Button>
+            <Button type="button" size="icon" variant="ghost" className="h-7 w-7" disabled={i === value.length - 1} onClick={() => move(i, 1)} aria-label={`Move ${o} down`}><ArrowDown className="h-3.5 w-3.5" /></Button>
+            <Button type="button" size="icon" variant="ghost" className="h-7 w-7 text-destructive" onClick={() => onChange(value.filter((x) => x !== o))} aria-label={`Remove ${o}`}><Trash2 className="h-3.5 w-3.5" /></Button>
+          </li>
+        ))}
+        {!value.length && <li className="text-xs text-destructive">Add at least one option.</li>}
+      </ul>
     </div>
   );
 }

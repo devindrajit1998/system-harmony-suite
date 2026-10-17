@@ -21,19 +21,20 @@ export function DynamicForm({ fields, initial = {}, onSubmit, onCancel, submitLa
     const errs = validateValues(fields, values);
     setErrors(errs);
     if (Object.keys(errs).length === 0) onSubmit?.(values);
+    else document.getElementById(`f-${Object.keys(errs)[0]}`)?.focus();
   };
 
   return (
     <form onSubmit={submit} className="space-y-4" noValidate>
       {fields.map((f) => (
-        <div key={f.key} className="space-y-1.5">
+        <div key={f.key} className={`space-y-1.5 ${errors[f.key] ? "[&_input]:border-destructive [&_textarea]:border-destructive [&_button[role=combobox]]:border-destructive" : ""}`}>
           <Label htmlFor={`f-${f.key}`} className="flex items-center gap-1">
             {f.label}
             {f.required && <span className="text-destructive">*</span>}
             {f.tier === "custom" && <span className="ml-1 rounded bg-muted px-1.5 text-[10px] font-medium uppercase text-muted-foreground">custom</span>}
           </Label>
           <FieldInput id={`f-${f.key}`} field={f} value={values[f.key]} onChange={(v) => { setValues((p) => ({ ...p, [f.key]: v })); setErrors((p) => ({ ...p, [f.key]: "" })); }} />
-          {errors[f.key] && <p className="text-xs text-destructive">{errors[f.key]}</p>}
+          {errors[f.key] && <p role="alert" className="text-xs font-medium text-destructive">{errors[f.key]}</p>}
         </div>
       ))}
       <div className="flex gap-2 pt-2">
