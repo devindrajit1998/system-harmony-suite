@@ -15,6 +15,7 @@ import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as SuperRouteImport } from './routes/super'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AppModuleRouteImport } from './routes/app.$module'
+import { Route as DevIsolationRouteImport } from './routes/dev.isolation'
 import { Route as SuperIndexRouteImport } from './routes/super.index'
 import { Route as SuperAuditRouteImport } from './routes/super.audit'
 import { Route as SuperBundlesRouteImport } from './routes/super.bundles'
@@ -56,6 +57,11 @@ const AppModuleRoute = AppModuleRouteImport.update({
   id: '/$module',
   path: '/$module',
   getParentRoute: () => AppRoute,
+} as any)
+const DevIsolationRoute = DevIsolationRouteImport.update({
+  id: '/dev/isolation',
+  path: '/dev/isolation',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const SuperIndexRoute = SuperIndexRouteImport.update({
   id: '/',
@@ -119,6 +125,7 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof OnboardingRoute
   '/super': typeof SuperRouteWithChildren
   '/app/$module': typeof AppModuleRoute
+  '/dev/isolation': typeof DevIsolationRoute
   '/super/audit': typeof SuperAuditRoute
   '/super/bundles': typeof SuperBundlesRoute
   '/super/modules': typeof SuperModulesRoute
@@ -136,6 +143,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/onboarding': typeof OnboardingRoute
   '/app/$module': typeof AppModuleRoute
+  '/dev/isolation': typeof DevIsolationRoute
   '/super/audit': typeof SuperAuditRoute
   '/super/bundles': typeof SuperBundlesRoute
   '/super/modules': typeof SuperModulesRoute
@@ -156,6 +164,7 @@ export interface FileRoutesById {
   '/onboarding': typeof OnboardingRoute
   '/super': typeof SuperRouteWithChildren
   '/app/$module': typeof AppModuleRoute
+  '/dev/isolation': typeof DevIsolationRoute
   '/super/audit': typeof SuperAuditRoute
   '/super/bundles': typeof SuperBundlesRoute
   '/super/modules': typeof SuperModulesRoute
@@ -177,6 +186,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/super'
     | '/app/$module'
+    | '/dev/isolation'
     | '/super/audit'
     | '/super/bundles'
     | '/super/modules'
@@ -194,6 +204,7 @@ export interface FileRouteTypes {
     | '/'
     | '/onboarding'
     | '/app/$module'
+    | '/dev/isolation'
     | '/super/audit'
     | '/super/bundles'
     | '/super/modules'
@@ -213,6 +224,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/super'
     | '/app/$module'
+    | '/dev/isolation'
     | '/super/audit'
     | '/super/bundles'
     | '/super/modules'
@@ -232,6 +244,7 @@ export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   OnboardingRoute: typeof OnboardingRoute
   SuperRoute: typeof SuperRouteWithChildren
+  DevIsolationRoute: typeof DevIsolationRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -277,6 +290,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/$module'
       preLoaderRoute: typeof AppModuleRouteImport
       parentRoute: typeof AppRoute
+    }
+    '/dev/isolation': {
+      id: '/dev/isolation'
+      path: '/dev/isolation'
+      fullPath: '/dev/isolation'
+      preLoaderRoute: typeof DevIsolationRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/super/': {
       id: '/super/'
@@ -405,6 +425,7 @@ const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   OnboardingRoute: OnboardingRoute,
   SuperRoute: SuperRouteWithChildren,
+  DevIsolationRoute: DevIsolationRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
