@@ -25,9 +25,9 @@ export const Route = createFileRoute("/onboarding")({
   head: () => ({
     meta: [
       { title: "Set up a business — Modulo" },
-      { name: "description", content: "Five quick steps: business type, modules, fields, terminology and team." },
+      { name: "description", content: "Six steps: business, modules, fields, terminology & team, plan and review." },
       { property: "og:title", content: "Set up a business — Modulo" },
-      { property: "og:description", content: "Launch a new tenant workspace in five steps." },
+      { property: "og:description", content: "Launch a new tenant workspace in six steps." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
