@@ -66,6 +66,7 @@ describe("tenant-gated event reactions", () => {
   });
 });
 describe("operational rules", () => {
+  it('salon POS includes its products module as well as services',()=> { const s=seedAll(); const salon=s.tenants.find(t=>t.id==='glow'); expect(salon?.modules).toContain('products'); expect(salon?.modules).toContain('services'); expect(s.records.glow.product).toHaveLength(8); });
   it("blocks same staff overlaps but allows different staff", () => {
     const a = newRow({
       date: "2026-10-17",

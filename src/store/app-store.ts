@@ -263,6 +263,7 @@ export const useAppStore = create<Data & Actions>()(
         const upgraded = structuredClone(data.records);
         data.events = seedOperations(structuredClone(data.tenants), upgraded);
         for (const t of data.tenants) {
+          if (t.id === 'glow' && t.modules.includes('pos') && !t.modules.includes('products')) t.modules.push('products');
           const records = (data.records[t.id] ??= {});
           for (const entity of [
             "appointment",
