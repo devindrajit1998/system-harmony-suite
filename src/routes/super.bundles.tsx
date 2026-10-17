@@ -54,6 +54,7 @@ function BundlesPage() {
           ); })}
         </div>
         <div className="space-y-6">
+          <p className="rounded-lg border border-dashed bg-muted/50 px-3 py-2 text-sm text-muted-foreground">Changes apply to new tenants only. Existing tenants keep the setup they started with.</p>
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="space-y-1.5"><Label>Name</Label><Input value={draft.name} onChange={(e) => setDraft({ ...draft, name: e.target.value })} /></div>
             <div className="space-y-1.5"><Label>Description</Label><Input value={draft.description} onChange={(e) => setDraft({ ...draft, description: e.target.value })} /></div>

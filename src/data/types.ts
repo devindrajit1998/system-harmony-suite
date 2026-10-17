@@ -11,6 +11,19 @@ export interface FieldDef {
   labelTerm?: string;
   /** System fields that must always be filled in. */
   required?: boolean;
+  /** Custom fields only: hidden everywhere but data is kept on records. */
+  deprecated?: boolean;
+  /** Select/multiselect options kept on old records but not selectable. */
+  retiredOptions?: string[];
+  rules?: FieldRules;
+}
+
+export interface FieldRules {
+  maxLength?: number;
+  min?: number;
+  max?: number;
+  noFuture?: boolean;
+  noPast?: boolean;
 }
 
 export interface EntityDef {
@@ -82,6 +95,8 @@ export interface Tenant {
   terms: Record<string, string>;
   fieldSettings: Record<string, Record<string, FieldSetting>>;
   customFields: Record<string, FieldDef[]>;
+  /** entity -> ordered field keys (Field Builder order). */
+  fieldOrder?: Record<string, string[]>;
   roles: Role[];
 }
 

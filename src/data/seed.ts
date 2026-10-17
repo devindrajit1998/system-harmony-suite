@@ -1,5 +1,5 @@
 import { BUNDLES, ENTITY_MAP, MODULES } from "./catalog";
-import type { AuditEntry, FieldDef, FieldSetting, Perm, RecordRow, Role, Tenant } from "./types";
+import type { AuditEntry, BundleDef, FieldDef, FieldSetting, Perm, RecordRow, Role, Tenant } from "./types";
 
 let s = 42;
 const rand = () => {
@@ -114,7 +114,16 @@ export function defaultRoles(bundleKey: string, modules: string[]): Role[] {
 
 export function buildTenant(spec: Spec & { id: string; custom?: Record<string, FieldDef[]> }): Tenant {
   const b = BUNDLES.find((x) => x.key === spec.bundle)!;
-  return { ...spec, modules: [...b.modules], terms: { ...b.terms }, fieldSettings: defaultFieldSettings(spec.bundle), customFields: spec.custom ?? {}, roles: defaultRoles(spec.bundle, b.modules) };
+  // Custom field ids are tenant-scoped so they never collide across tenants.
+  const customFields = Object.fromEntries(Object.entries(spec.custom ?? {}).map(([e, fs]) => [e, fs.map((f) => ({ ...f, key: f.key.replace(/^cf_/, `cf_${spec.id}_`) }))]));
+  return { ...spec, modules: [...b.modules], terms: { ...b.terms }, fieldSettings: defaultFieldSettings(spec.bundle), customFields, roles: defaultRoles(spec.bundle, b.modules) };
+}
+
+/** Snapshot a bundle's defaults onto a new tenant. Later bundle edits never touch it. */
+export function bundleSnapshot(b: BundleDef) {
+  const fs = defaultFieldSettings(b.key);
+  for (const [e, keys] of Object.entries(b.defaultFields)) for (const k of keys) { fs[e] ??= {}; fs[e][k] = { enabled: true, required: false }; }
+  return { bundle: b.key, modules: [...b.modules], terms: { ...b.terms }, fieldSettings: fs, customFields: {} as Record<string, FieldDef[]> };
 }
 
 export function seedAll() {
