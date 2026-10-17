@@ -23,14 +23,14 @@ export function DynamicTable({ fields, rows, currency, onEdit, onDelete }: {
   const [hidden, setHidden] = useState<string[]>([]);
   const [page, setPage] = useState(0);
 
-  const filterable = fields.filter((f) => f.type === "select").slice(0, 3);
+  const filterable = fields.filter((f) => f.type === "select" || f.type === "boolean");
   const cols = fields.filter((f) => !hidden.includes(f.key) && f.type !== "textarea");
 
   const filtered = useMemo(() => {
     const s = q.toLowerCase();
     return rows.filter((r) =>
       (!s || fields.some((f) => String(r.values[f.key] ?? "").toLowerCase().includes(s))) &&
-      Object.entries(filters).every(([k, v]) => !v || v === "all" || r.values[k] === v),
+      Object.entries(filters).every(([k, v]) => !fields.some(f => f.key === k) || !v || v === "all" || r.values[k] === (fields.find(f => f.key === k)?.type === 'boolean' ? v === 'true' : v)),
     );
   }, [rows, q, filters, fields]);
   const pages = Math.max(1, Math.ceil(filtered.length / PAGE));
@@ -48,8 +48,8 @@ export function DynamicTable({ fields, rows, currency, onEdit, onDelete }: {
           <Select key={f.key} value={filters[f.key] ?? "all"} onValueChange={(v) => { setFilters((p) => ({ ...p, [f.key]: v })); setPage(0); }}>
             <SelectTrigger className="w-[150px]"><SelectValue /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All {f.label.toLowerCase()}</SelectItem>
-              {(f.options ?? []).map((o) => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+              <SelectItem value="all">{f.type === 'boolean' ? 'Any' : 'All'} {f.label.toLowerCase()}</SelectItem>
+              {f.type === 'boolean' ? <><SelectItem value="true">Yes</SelectItem><SelectItem value="false">No</SelectItem></> : (f.options ?? []).filter(o => !f.retiredOptions?.includes(o)).map((o) => <SelectItem key={o} value={o}>{o}</SelectItem>)}
             </SelectContent>
           </Select>
         ))}

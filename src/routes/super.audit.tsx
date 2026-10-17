@@ -1,3 +1,4 @@
+import { pageHead } from '@/lib/page-head';
 import { createFileRoute } from "@tanstack/react-router";
 import { ScrollText } from "lucide-react";
 import { useState } from "react";
@@ -5,7 +6,7 @@ import { EmptyState, PageHeader } from "@/components/shell/PortalShell";
 import { Input } from "@/components/ui/input";
 import { useAppStore } from "@/store/app-store";
 
-export const Route = createFileRoute("/super/audit")({ component: AuditPage });
+export const Route = createFileRoute("/super/audit")({ head: () => pageHead('Platform audit log', 'Review changes across tenant workspaces.'), component: AuditPage });
 
 function AuditPage() {
   const audit = useAppStore((s) => s.audit);

@@ -1,3 +1,4 @@
+import { pageHead } from '@/lib/page-head';
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Eye, Plus } from "lucide-react";
 import { useState } from "react";
@@ -12,7 +13,7 @@ import { iconFor } from "@/lib/icons";
 import { monthlyPrice } from "@/lib/rules";
 import { useAppStore } from "@/store/app-store";
 
-export const Route = createFileRoute("/super/tenants")({ component: TenantsPage });
+export const Route = createFileRoute("/super/tenants")({ head: () => pageHead('Tenant directory', 'Browse businesses by type, plan and status.'), component: TenantsPage });
 
 const statusVariant = { active: "default", trial: "secondary", suspended: "destructive" } as const;
 

@@ -1,4 +1,5 @@
 import { BUNDLES, ENTITY_MAP, MODULES } from "./catalog";
+import { seedOperations } from './operational-seed';
 import type { AuditEntry, BundleDef, FieldDef, FieldSetting, Perm, RecordRow, Role, Tenant } from "./types";
 
 let s = 42;
@@ -151,5 +152,6 @@ export function seedAll() {
     const t = pick(tenants);
     return { id: uid(), at: new Date(Date.now() - i * int(2, 9) * 36e5).toISOString(), actor: `${pick(FIRST)} @ ${t.name}`, action: pick(actions), target: pick(MODULES).name };
   });
-  return { tenants, records, audit };
+  const events = seedOperations(tenants, records);
+  return { tenants, records, audit, events };
 }

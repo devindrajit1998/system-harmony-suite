@@ -1,3 +1,4 @@
+import { pageHead } from '@/lib/page-head';
 import { createFileRoute } from "@tanstack/react-router";
 import { Check } from "lucide-react";
 import { toast } from "sonner";
@@ -10,7 +11,7 @@ import { useModules, useTenant, useTenantPrice } from "@/hooks/use-tenant";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/store/app-store";
 
-export const Route = createFileRoute("/app/settings/billing")({ component: Billing });
+export const Route = createFileRoute("/app/settings/billing")({ head: () => pageHead('Subscription and billing', 'Tenant subscription plans, add-ons and sample invoices.'), component: Billing });
 
 function Billing() {
   const tenant = useTenant();

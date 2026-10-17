@@ -1,3 +1,4 @@
+import { pageHead } from '@/lib/page-head';
 import { createFileRoute } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { ModulePicker, PriceSummary } from "@/components/ModulePicker";
@@ -5,7 +6,7 @@ import { PageHeader } from "@/components/shell/PortalShell";
 import { useTenant, useTenantPrice } from "@/hooks/use-tenant";
 import { useAppStore } from "@/store/app-store";
 
-export const Route = createFileRoute("/app/settings/modules")({ component: ModulesSettings });
+export const Route = createFileRoute("/app/settings/modules")({ head: () => pageHead('Workspace modules', 'Manage enabled tenant modules and dependencies.'), component: ModulesSettings });
 
 function ModulesSettings() {
   const tenant = useTenant();

@@ -1,3 +1,4 @@
+import { pageHead } from '@/lib/page-head';
 import { createFileRoute } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/shell/PortalShell";
@@ -9,7 +10,7 @@ import { useAppStore } from "@/store/app-store";
 import { useState } from "react";
 import type { PlanDef } from "@/data/types";
 
-export const Route = createFileRoute("/super/plans")({ component: PlansPage });
+export const Route = createFileRoute("/super/plans")({ head: () => pageHead('Platform plans', 'Manage Starter, Pro and Business plans.'), component: PlansPage });
 
 function PlanCard({ plan, count }: { plan: PlanDef; count: number }) {
   const save = useAppStore((s) => s.savePlan);

@@ -1,3 +1,4 @@
+import { pageHead } from '@/lib/page-head';
 import { createFileRoute } from "@tanstack/react-router";
 import { Plus } from "lucide-react";
 import { useState } from "react";
@@ -14,7 +15,7 @@ import type { ModuleDef } from "@/data/types";
 import { ICON_CHOICES, iconFor } from "@/lib/icons";
 import { useAppStore } from "@/store/app-store";
 
-export const Route = createFileRoute("/super/modules")({ component: ModulesPage });
+export const Route = createFileRoute("/super/modules")({ head: () => pageHead('Module catalog', 'Manage modules, dependencies and tenant usage.'), component: ModulesPage });
 
 const blank: ModuleDef = { key: "", name: "", icon: "Box", description: "", dependsOn: [], price: 0, status: "beta" };
 

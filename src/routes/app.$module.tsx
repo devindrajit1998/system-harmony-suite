@@ -13,8 +13,15 @@ import type { RecordRow } from "@/data/types";
 import { useFields, useModules, useTenant, useTerms } from "@/hooks/use-tenant";
 import { iconFor } from "@/lib/icons";
 import { useAppStore } from "@/store/app-store";
+import { Appointments } from '@/components/modules/Appointments';
+import { Checkin } from '@/components/modules/Checkin';
+import { POS } from '@/components/modules/POS';
+import { Kitchen } from '@/components/modules/Kitchen';
 
-export const Route = createFileRoute("/app/$module")({ component: ModulePage });
+export const Route = createFileRoute("/app/$module")({
+  head: ({ params }) => { const title = `${params.module.charAt(0).toUpperCase() + params.module.slice(1)} workspace — Modulo`; const description = `Tenant-scoped ${params.module} workspace with configured fields and actions.`; return { meta: [{ title }, { name:'description',content:description }, {property:'og:title',content:title},{property:'og:description',content:description},{property:'og:type',content:'website'},{name:'twitter:card',content:'summary'}] }; },
+  component: ModulePage,
+});
 
 function ModulePage() {
   const { module } = Route.useParams();
@@ -25,10 +32,14 @@ function ModulePage() {
   if (!m) {
     const exists = all.find((x) => x.key === module);
     return (
-      <EmptyState icon={Lock} title={exists ? `${exists.name} is turned off` : "Page not found"} description={exists ? "Turn this module on to start using it." : undefined}
+      <EmptyState icon={Lock} title={exists ? "Module not enabled" : "Page not found"} description={exists ? "Turn this module on to start using it." : undefined}
         action={exists && <Button asChild><Link to="/app/settings/modules">Go to modules</Link></Button>} />
     );
   }
+  if (module === 'appointments') return <Appointments />;
+  if (module === 'checkin') return <Checkin />;
+  if (module === 'pos') return <POS />;
+  if (module === 'kds') return <Kitchen />;
   if (!m.entity) return <Reports />;
   return <EntityPage key={m.key} entity={m.entity} icon={m.icon} />;
 }
@@ -80,7 +91,7 @@ function Reports() {
   const enabled = useModules();
   const { tp } = useTerms();
   const records = useAppStore((s) => s.records[tenant.id]) ?? {};
-  const data = enabled.filter((m) => m.entity).map((m) => ({ name: tp(m.entity!), count: records[m.entity!]?.length ?? 0 }));
+  const data = enabled.flatMap((m) => m.entity ? [{ name: tp(m.entity), count: records[m.entity]?.length ?? 0 }] : []);
   return (
     <div>
       <PageHeader title="Reports" description="Record counts across your enabled modules." />

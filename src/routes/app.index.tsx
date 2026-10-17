@@ -1,3 +1,4 @@
+import { pageHead } from '@/lib/page-head';
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { AlertTriangle, BadgeCheck, CalendarClock, ChefHat, CreditCard, DollarSign, LayoutGrid, Package, ScanLine, ShoppingBag, Users } from "lucide-react";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
@@ -7,7 +8,7 @@ import type { RecordRow } from "@/data/types";
 import { money, useModules, useTenant, useTerms } from "@/hooks/use-tenant";
 import { useAppStore } from "@/store/app-store";
 
-export const Route = createFileRoute("/app/")({ component: TenantDashboard });
+export const Route = createFileRoute("/app/")({ head: () => pageHead('Business overview', 'Tenant overview with enabled-module KPIs.'), component: TenantDashboard });
 
 const today = () => new Date().toISOString().slice(0, 10);
 
@@ -24,7 +25,7 @@ function TenantDashboard() {
   const widgets = [
     on("billing") && <StatCard key="rev" label="Revenue collected" value={money(sum("invoice", "amount", (r) => r.values.status === "Paid"), cur)} hint={`From paid ${tp("invoice").toLowerCase()}`} icon={DollarSign} />,
     on("billing") && <StatCard key="pend" label={`Pending ${tp("invoice").toLowerCase()}`} value={rows("invoice").filter((r) => r.values.status !== "Paid").length} hint={`${money(sum("invoice", "amount", (r) => r.values.status !== "Paid"), cur)} outstanding`} icon={DollarSign} />,
-    on("appointments") && <StatCard key="appt" label={`Today's ${tp("appointment").toLowerCase()}`} value={rows("appointment").filter((r) => r.values.date === today()).length} hint={`${rows("appointment").filter((r) => r.values.status === "Scheduled").length} upcoming`} icon={CalendarClock} />,
+    on("appointments") && <StatCard key="appt" label={`Today's ${tp("appointment").toLowerCase()}`} value={rows("appointment").filter((r) => r.values.date === today()).length} hint={`${rows("appointment").filter((r) => ['Confirmed','Pending'].includes(String(r.values.status))).length} upcoming`} icon={CalendarClock} />,
     on("memberships") && <StatCard key="mem" label={`Active ${tp("membership").toLowerCase()}`} value={rows("membership").filter((r) => r.values.status === "Active").length} hint={`${rows("membership").filter((r) => r.values.status === "Expired").length} expired`} icon={BadgeCheck} />,
     on("memberships") && <StatCard key="exp" label="Expiring soon" value={rows("membership").filter((r) => { const e = String(r.values.end_date ?? ""); const lim = new Date(Date.now() + 30 * 864e5).toISOString().slice(0, 10); return r.values.status === "Active" && e >= today() && e <= lim; }).length} hint={`${tp("membership")} ending within 30 days`} icon={BadgeCheck} />,
     on("checkin") && <StatCard key="chk" label={`${tp("checkin")} today`} value={rows("checkin").filter((r) => r.values.date === today()).length} icon={ScanLine} />,
