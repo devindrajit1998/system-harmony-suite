@@ -1,5 +1,5 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { AlertTriangle, BadgeCheck, CalendarClock, ChefHat, CreditCard, DollarSign, LayoutGrid, Package, ShoppingBag, Users } from "lucide-react";
+import { AlertTriangle, BadgeCheck, CalendarClock, ChefHat, CreditCard, DollarSign, LayoutGrid, Package, ScanLine, ShoppingBag, Users } from "lucide-react";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { PageHeader, StatCard } from "@/components/shell/PortalShell";
 import { Button } from "@/components/ui/button";

@@ -38,7 +38,7 @@ function SuperDashboard() {
         <StatCard label="Total tenants" value={tenants.length} icon={Building2} />
         <StatCard label="MRR" value={`$${mrr.toFixed(0)}`} hint="Excludes suspended tenants" icon={DollarSign} />
         <StatCard label="Active tenants" value={tenants.filter((t) => t.status === "active").length} icon={Activity} />
-        <StatCard label="On trial" value={tenants.filter((t) => t.status === "trial").length} icon={Hourglass} />
+        <StatCard label="Trials" value={tenants.filter((t) => t.status === "trial").length} hint="Tenants currently on trial" icon={Hourglass} />
       </div>
       <div className="grid gap-4 lg:grid-cols-3">
         <div className="rounded-xl border bg-card p-5 lg:col-span-2">
