@@ -1,3 +1,4 @@
+import { pageHead } from '@/lib/page-head';
 import { createFileRoute } from "@tanstack/react-router";
 import { Plus } from "lucide-react";
 import { useState } from "react";
@@ -12,7 +13,7 @@ import type { Perm } from "@/data/types";
 import { useModules, useTenant, useTerms } from "@/hooks/use-tenant";
 import { useAppStore } from "@/store/app-store";
 
-export const Route = createFileRoute("/app/settings/roles")({ component: Roles });
+export const Route = createFileRoute("/app/settings/roles")({ head: () => pageHead('Roles and permissions', 'Configure tenant roles and module permissions.'), component: Roles });
 
 const ACTIONS: (keyof Perm)[] = ["read", "create", "update", "delete"];
 

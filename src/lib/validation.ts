@@ -1,4 +1,12 @@
 import type { ResolvedField } from "@/hooks/use-tenant";
+import { resolveFields } from '@/hooks/use-tenant';
+import { useAppStore } from '@/store/app-store';
+
+export function validateRecord(entity: string, values: Record<string, unknown>, fields?: ResolvedField[]) {
+  const state = useAppStore.getState();
+  const tenant = state.tenants.find((t) => t.id === state.currentTenantId);
+  return validateValues(fields ?? (tenant ? resolveFields(tenant, entity) : []), values);
+}
 
 export function isEmpty(v: unknown) {
   return v === undefined || v === null || v === "" || (Array.isArray(v) && v.length === 0);

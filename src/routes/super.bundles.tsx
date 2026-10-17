@@ -1,3 +1,4 @@
+import { pageHead } from '@/lib/page-head';
 import { createFileRoute } from "@tanstack/react-router";
 import { Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
@@ -15,7 +16,7 @@ import { monthlyPrice } from "@/lib/rules";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/store/app-store";
 
-export const Route = createFileRoute("/super/bundles")({ component: BundlesPage });
+export const Route = createFileRoute("/super/bundles")({ head: () => pageHead('Bundle builder', 'Configure industry bundle defaults for future tenants.'), component: BundlesPage });
 
 function BundlesPage() {
   const bundles = useAppStore((s) => s.bundles);

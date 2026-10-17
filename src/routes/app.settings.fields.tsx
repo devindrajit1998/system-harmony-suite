@@ -1,3 +1,4 @@
+import { pageHead } from '@/lib/page-head';
 import { createFileRoute } from "@tanstack/react-router";
 import { ArchiveRestore, ArrowDown, ArrowUp, EyeOff, GripVertical, Lock, Pencil, Plus, RotateCcw, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -21,7 +22,7 @@ import { isEmpty } from "@/lib/validation";
 import { resolveFields, useModules, useTenant, useTerms } from "@/hooks/use-tenant";
 import { useAppStore } from "@/store/app-store";
 
-export const Route = createFileRoute("/app/settings/fields")({ component: FieldBuilder });
+export const Route = createFileRoute("/app/settings/fields")({ head: () => pageHead('Field builder', 'Manage tenant custom fields, validation and ordering.'), component: FieldBuilder });
 
 const TYPES: FieldType[] = ["text", "number", "date", "select", "multiselect", "textarea", "boolean"];
 

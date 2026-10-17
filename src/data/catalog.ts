@@ -13,7 +13,7 @@ export const MODULES: ModuleDef[] = [
   { key: "pos", name: "Point of Sale", icon: "CreditCard", description: "In-person sales", dependsOn: ["products"], price: 15, status: "active", entity: "sale" },
   { key: "inventory", name: "Inventory", icon: "Boxes", description: "Stock levels", dependsOn: ["products"], price: 10, status: "active", entity: "inventory" },
   { key: "tables", name: "Tables", icon: "LayoutGrid", description: "Floor plan and seating", dependsOn: [], price: 8, status: "active", entity: "table" },
-  { key: "kds", name: "Kitchen Display", icon: "ChefHat", description: "Kitchen tickets", dependsOn: ["pos", "tables"], price: 8, status: "beta", entity: "ticket" },
+  { key: "kds", name: "Kitchen Display", icon: "ChefHat", description: "Kitchen tickets", dependsOn: ["pos"], price: 8, status: "beta", entity: "ticket" },
   { key: "prescriptions", name: "Prescriptions", icon: "Pill", description: "Medication records", dependsOn: ["appointments"], price: 10, status: "active", entity: "prescription" },
   { key: "billing", name: "Billing", icon: "Receipt", description: "Invoices and payments", dependsOn: ["customers"], price: 10, status: "active", entity: "invoice" },
   { key: "reports", name: "Reports", icon: "BarChart3", description: "Business analytics", dependsOn: [], price: 5, status: "active" },
@@ -67,7 +67,7 @@ export const ENTITIES: EntityDef[] = [
   },
   {
     key: "appointment",
-    fields: [sys("customer", "Customer", "text", { labelTerm: "customer" }), sys("date", "Date", "date"), STATUS(["Scheduled", "Completed", "Cancelled", "No-show"]), opt("staff", "Staff", "text", { labelTerm: "staff" }), opt("service", "Service", "text", { labelTerm: "service" }), opt("duration_min", "Duration (min)", "number"), opt("notes", "Notes", "textarea")],
+    fields: [sys("customer", "Customer", "text", { labelTerm: "customer" }), sys("date", "Date", "date"), sys("time", "Time"), STATUS(["Confirmed", "Pending", "Completed", "Cancelled"]), opt("staff", "Staff", "text", { labelTerm: "staff" }), opt("service", "Service", "text", { labelTerm: "service" }), opt("duration_min", "Duration (min)", "number"), opt("notes", "Notes", "textarea")],
   },
   {
     key: "membership",
@@ -103,7 +103,7 @@ export const ENTITIES: EntityDef[] = [
   },
   {
     key: "ticket",
-    fields: [sys("name", "Ticket"), sys("table", "Table", "text", { labelTerm: "table" }), STATUS(["New", "Cooking", "Ready", "Served"]), opt("items", "Items", "number"), opt("notes", "Notes", "textarea")],
+    fields: [sys("name", "Ticket"), sys("table", "Table", "text", { labelTerm: "table" }), STATUS(["New", "Preparing", "Ready", "Served"]), opt("items", "Items", "number"), opt("notes", "Notes", "textarea")],
   },
   {
     key: "prescription",
@@ -111,7 +111,7 @@ export const ENTITIES: EntityDef[] = [
   },
   {
     key: "invoice",
-    fields: [sys("customer", "Customer", "text", { labelTerm: "customer" }), sys("amount", "Amount", "number"), STATUS(["Paid", "Due", "Overdue", "Void"]), opt("date", "Issued", "date"), opt("due_date", "Due date", "date"), opt("notes", "Notes", "textarea")],
+    fields: [sys("customer", "Customer", "text", { labelTerm: "customer" }), sys("amount", "Amount", "number"), STATUS(["Paid", "Due", "Overdue", "Void", "Draft"]), opt("date", "Issued", "date"), opt("due_date", "Due date", "date"), opt("notes", "Notes", "textarea")],
   },
 ];
 
@@ -120,7 +120,7 @@ export const ENTITY_MAP = Object.fromEntries(ENTITIES.map((e) => [e.key, e]));
 export const BUNDLES: BundleDef[] = [
   { key: "gym", name: "Gym", icon: "Dumbbell", description: "Memberships, classes, check-ins", modules: ["customers", "memberships", "checkin", "classes", "staff", "billing"], terms: { customer: "Member", staff: "Trainer" }, defaultFields: { customer: ["email", "dob", "emergency_contact", "height_cm", "weight_kg"] } },
   { key: "clinic", name: "Clinic", icon: "Stethoscope", description: "Patients, appointments, prescriptions", modules: ["customers", "appointments", "staff", "prescriptions", "billing"], terms: { customer: "Patient", staff: "Doctor" }, defaultFields: { customer: ["email", "dob", "gender", "blood_group", "allergies", "emergency_contact"] } },
-  { key: "salon", name: "Salon", icon: "Scissors", description: "Bookings, services, POS", modules: ["customers", "appointments", "services", "staff", "pos", "billing"], terms: { customer: "Client", staff: "Stylist", appointment: "Booking" }, defaultFields: { customer: ["email", "hair_type", "notes"] } },
+  { key: "salon", name: "Salon", icon: "Scissors", description: "Bookings, services, POS", modules: ["customers", "appointments", "services", "staff", "products", "pos", "billing"], terms: { customer: "Client", staff: "Stylist", appointment: "Booking" }, defaultFields: { customer: ["email", "hair_type", "notes"] } },
   { key: "cafe", name: "Cafe", icon: "Coffee", description: "Menu, tables, kitchen", modules: ["products", "tables", "pos", "kds", "inventory"], terms: { product: "Menu Item" }, defaultFields: { product: ["category", "description"] } },
   { key: "online", name: "Online Seller", icon: "Store", description: "Catalog, orders, stock", modules: ["products", "orders", "inventory", "customers", "billing"], terms: {}, defaultFields: { customer: ["email", "address"], product: ["sku", "category"] } },
   { key: "custom", name: "Custom", icon: "Puzzle", description: "Pick everything yourself", modules: ["customers"], terms: {}, defaultFields: {} },

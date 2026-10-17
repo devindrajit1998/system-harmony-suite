@@ -24,6 +24,7 @@ function IsolationPage() {
   const tenants = useAppStore((s) => s.tenants);
   const records = useAppStore((s) => s.records);
   const bundles = useAppStore((s) => s.bundles);
+  const events = useAppStore(s => s.events) ?? [];
   const checks = useMemo(() => runIsolationChecks(tenants, records, bundles), [tenants, records, bundles]);
   const ok = checks.every((c) => c.pass);
   return (
@@ -44,6 +45,10 @@ function IsolationPage() {
           </li>
         ))}
       </ul>
+      <details className="mt-6 rounded-lg border bg-card p-4">
+        <summary className="cursor-pointer font-semibold">Recent events ({events.length})</summary>
+        <ol className="mt-4 divide-y">{events.slice(0,20).map(event => <li key={event.id} className="py-3 text-sm"><div className="flex flex-wrap justify-between gap-2"><strong>{event.name}</strong><time>{new Date(event.at).toLocaleString()}</time></div><p className="text-muted-foreground">{event.payload.tenantId} · {event.payload.sourceId}</p>{event.reactions.map(r => <p key={r.module}>{r.module}: <strong>{r.result}</strong> — {r.reason}</p>)}{event.reactions.length===0&&<p>No reactions registered</p>}</li>)}</ol>
+      </details>
     </div>
   );
 }

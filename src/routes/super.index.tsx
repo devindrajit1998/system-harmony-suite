@@ -1,3 +1,4 @@
+import { pageHead } from '@/lib/page-head';
 import { createFileRoute } from "@tanstack/react-router";
 import { Activity, Building2, DollarSign, Hourglass } from "lucide-react";
 import { useMemo } from "react";
@@ -6,7 +7,7 @@ import { PageHeader, StatCard } from "@/components/shell/PortalShell";
 import { monthlyPrice } from "@/lib/rules";
 import { useAppStore } from "@/store/app-store";
 
-export const Route = createFileRoute("/super/")({ component: SuperDashboard });
+export const Route = createFileRoute("/super/")({ head: () => pageHead('Platform overview', 'Revenue, trials and tenant distribution.'), component: SuperDashboard });
 
 function SuperDashboard() {
   const tenants = useAppStore((s) => s.tenants);

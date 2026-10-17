@@ -3,8 +3,8 @@ import { MODULES, PLANS } from "@/data/catalog";
 import { dependents, disableModule, enableModule, monthlyPrice } from "@/lib/rules";
 
 describe("module dependency rules", () => {
-  it("enabling KDS auto-enables POS, Tables and Products", () => {
-    expect(enableModule([], "kds", MODULES).sort()).toEqual(["kds", "pos", "products", "tables"]);
+  it("enabling KDS auto-enables POS and Products but Tables stays optional", () => {
+    expect(enableModule([], "kds", MODULES).sort()).toEqual(["kds", "pos", "products"]);
   });
   it("disabling Memberships also turns off Check-in and Classes", () => {
     const on = ["customers", "memberships", "checkin", "classes", "staff"];

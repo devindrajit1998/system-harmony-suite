@@ -1,3 +1,4 @@
+import { pageHead } from '@/lib/page-head';
 import { createFileRoute } from "@tanstack/react-router";
 import { RotateCcw } from "lucide-react";
 import { PageHeader } from "@/components/shell/PortalShell";
@@ -8,7 +9,7 @@ import { useModules, useTenant } from "@/hooks/use-tenant";
 import { plural } from "@/lib/rules";
 import { useAppStore } from "@/store/app-store";
 
-export const Route = createFileRoute("/app/settings/terminology")({ component: Terminology });
+export const Route = createFileRoute("/app/settings/terminology")({ head: () => pageHead('Workspace terminology', 'Manage tenant-specific business terms.'), component: Terminology });
 
 function Terminology() {
   const tenant = useTenant();

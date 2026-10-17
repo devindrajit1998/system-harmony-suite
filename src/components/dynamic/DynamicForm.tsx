@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import type { ResolvedField } from "@/hooks/use-tenant";
-import { validateValues } from "@/lib/validation";
+import { validateRecord } from "@/lib/validation";
 import { FieldInput } from "./FieldInput";
 
 export function DynamicForm({ fields, initial = {}, onSubmit, onCancel, submitLabel = "Save", preview }: {
@@ -18,7 +18,7 @@ export function DynamicForm({ fields, initial = {}, onSubmit, onCancel, submitLa
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    const errs = validateValues(fields, values);
+    const errs = validateRecord("", values, fields);
     setErrors(errs);
     if (Object.keys(errs).length === 0) onSubmit?.(values);
     else document.getElementById(`f-${Object.keys(errs)[0]}`)?.focus();
