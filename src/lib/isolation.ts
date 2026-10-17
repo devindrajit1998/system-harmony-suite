@@ -43,10 +43,22 @@ export function runIsolationChecks(tenants: Tenant[], records: Record<string, Re
     if (Object.keys(records[t.id] ?? {}).length === 0 && Object.values(t.customFields).flat().length) fresh.push(`${t.name}: new tenant has custom fields`);
   }
 
+  const nT = tenants.length;
+  const nRecords = Object.values(records).reduce((a, byE) => a + Object.values(byE).reduce((b, rs) => b + rs.length, 0), 0);
+  const nCfValues = tenants.reduce((a, t) => a + Object.values(records[t.id] ?? {}).flat().reduce((b, r) => b + Object.keys(r.values).filter((k) => k.startsWith("cf_")).length, 0), 0);
+  const nTermMaps = tenants.filter((t) => t.terms).length;
+  const none = (what: string) => `Nothing to compare: ${what}`;
+  const mk = (id: string, label: string, empty: string | null, issues: string[], ok: string): Check =>
+    empty ? { id, label, pass: false, detail: none(empty) } : { id, label, pass: !issues.length, detail: issues.length ? `${ok} — ${issues.slice(0, 5).join("; ")}` : ok };
+
   return [
-    { id: "a", label: "No custom field id is shared between two tenants", pass: !shared.length, detail: shared.join("; ") || `${owner.size} custom field ids, all unique` },
-    { id: "b", label: "No record references a field id from another tenant", pass: !foreign.length, detail: foreign.slice(0, 5).join("; ") || "All custom values point to the record's own tenant" },
-    { id: "c", label: "Each tenant's terminology map is independent", pass: !sameTerms.length, detail: sameTerms.join("; ") || `${tenants.length} separate terminology maps` },
-    { id: "d", label: "A freshly created tenant starts with only its bundle defaults", pass: !fresh.length, detail: fresh.join("; ") || `${bundles.length} bundles snapshot cleanly: 0 custom fields, 0 records` },
+    mk("a", "No custom field id is shared between two tenants", nT < 2 ? "fewer than 2 tenants" : owner.size === 0 ? "no custom fields exist" : null, shared,
+      `Compared ${nT} tenants, ${owner.size} custom field ids`),
+    mk("b", "No record references a field id from another tenant", nRecords === 0 ? "no records exist" : nCfValues === 0 ? "no record holds a custom field value" : null, foreign,
+      `Compared ${nRecords} records, ${nCfValues} custom field values across ${nT} tenants`),
+    mk("c", "Each tenant's terminology map is independent", nTermMaps < 2 ? "fewer than 2 terminology maps" : null, sameTerms,
+      `Compared ${nTermMaps} tenant terminology maps against each other and ${bundles.length} bundles`),
+    mk("d", "A freshly created tenant starts with only its bundle defaults", bundles.length === 0 ? "no bundles exist" : null, fresh,
+      `Snapshotted ${bundles.length} bundles, checked ${nT} tenants: 0 unbundled custom fields`),
   ];
 }
